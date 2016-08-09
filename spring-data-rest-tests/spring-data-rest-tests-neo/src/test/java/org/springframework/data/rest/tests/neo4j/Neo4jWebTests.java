@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package org.springframework.data.rest.tests.neo4j;import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+package org.springframework.data.rest.tests.neo4j;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 import java.util.Arrays;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.tests.CommonWebTests;
-import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.hateoas.Link;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -33,6 +35,8 @@ import org.springframework.test.context.ContextConfiguration;
 public class Neo4jWebTests extends CommonWebTests {
 
 	@Autowired TestDataPopulator populator;
+	@Autowired CustomerRepository customerRepository;
+
 	@Before
 	@Override
 	public void setUp() {
@@ -62,6 +66,8 @@ public class Neo4jWebTests extends CommonWebTests {
 		// Delete customer
 		mvc.perform(delete(customerLink.getHref()));
 
+		Customer c = customerRepository.findOne(0l);
+		Assert.assertNull(c);
 		// Assert no customers anymore
 		assertDoesNotHaveContentLinkWithRel("self", client.request(customers));
 	}
